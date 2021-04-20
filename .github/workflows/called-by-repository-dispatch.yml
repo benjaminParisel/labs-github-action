@@ -1,0 +1,27 @@
+name: Called by repository_dispatch
+
+on:
+  workflow_dispatch:    
+  repository_dispatch:
+    types: [ labs-repository-dispatch-event ]
+
+jobs:
+  calledByRepository:
+    name: Build, publish and upload binaries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check param
+        id: init
+        run: |
+          echo "${{ github.event.client_payload.ref }}"
+          echo "-------------------------------------"
+          echo "${{ github.ref }}"
+          if [ ${{ github.event.action }} == 'labs-repository-dispatch-event' ]
+          then
+              echo "##[set-output name=branchRef;]$(echo ${{ github.event.client_payload.ref }})"                
+          else
+              echo "##[set-output name=branchRef;]$(echo ${{ github.event.inputs.releaseVersion }})"                
+          fi
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ steps.init.outputs.branchRef }} 
