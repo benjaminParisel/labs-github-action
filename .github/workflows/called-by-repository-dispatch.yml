@@ -13,6 +13,7 @@ jobs:
       - name: Check param
         id: init
         run: |
+          echo "------------MASTER ------------------"
           echo "${{ github.event.client_payload.ref }}"
           echo "-------------------------------------"
           echo "${{ github.ref }}"
