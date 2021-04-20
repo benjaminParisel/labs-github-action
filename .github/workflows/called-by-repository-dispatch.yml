@@ -3,7 +3,7 @@ name: Called by repository_dispatch
 on:
   workflow_dispatch:    
   repository_dispatch:
-    types: [ labs-repository-dispatch-event ]
+    types: [ github-repository-dispatch ]
 
 jobs:
   calledByRepository:
