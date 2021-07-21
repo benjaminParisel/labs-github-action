@@ -17,12 +17,13 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
+      - run: git config --global user.email "rd.user@explample.com"
+      - run: git config --global user.name "bot-ci"
 
       - name: Install Node
         uses: actions/setup-node@v1 
         with:
-          node-version: '14'
-          cache: 'npm'
+          node-version: '14'          
 
       - name: Install dependencies
         run: npm ci      
