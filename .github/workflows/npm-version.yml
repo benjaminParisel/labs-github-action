@@ -30,5 +30,6 @@ jobs:
 
       - name: 'change version'
         run: |
-        npm version ${{github.event.inputs.version}}
+        TOTO=$(npm version ${{github.event.inputs.version}} -m "Release %s")
+        npm push --tags
         
