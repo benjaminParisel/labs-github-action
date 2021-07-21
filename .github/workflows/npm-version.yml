@@ -17,8 +17,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
-      - run: git config --global user.email "rd.user@explample.com"
-      - run: git config --global user.name "bot-ci"
+        run: git config --global user.email "you@example.com"
+        run: git config --global user.name "Your Name"
 
       - name: Install Node
         uses: actions/setup-node@v1 
@@ -29,7 +29,6 @@ jobs:
         run: npm ci      
 
       - name: 'change version'
-        uses: reedyuk/npm-version@1.1.1
-        with:
-          version: ${{github.event.inputs.version}}          
-          git-tag-version: 'true'
+        run: |
+        npm version ${{github.event.inputs.version}}
+        
