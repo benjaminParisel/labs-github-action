@@ -17,8 +17,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
-        run: git config --global user.email "you@example.com"
-        run: git config --global user.name "Your Name"
+      - run: git config --global user.email "you@example.com"
+      - run: git config --global user.name "Your Name"
 
       - name: Install Node
         uses: actions/setup-node@v1 
@@ -28,8 +28,8 @@ jobs:
       - name: Install dependencies
         run: npm ci      
 
-      - name: 'change version'
+      - name: 'change version'        
         run: |
-        TOTO=$(npm version ${{github.event.inputs.version}} -m "Release %s")
-        npm push --tags
+          NEWRELEASETAG=$(npm version ${{github.event.inputs.version}} -m "Release %s") 
+          git push --atomic origin main $NEWRELEASETAG
         
