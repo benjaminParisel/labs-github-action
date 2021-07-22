@@ -18,8 +18,7 @@ jobs:
 
       - name: build and test
         run: | 
-          npm ci                    
-          npm run build && npm run test
+          npm ci
 
       - name: Prepare package
         run: npm-pack         
