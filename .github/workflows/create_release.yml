@@ -24,7 +24,7 @@ jobs:
           npm ci
 
       - name: Prepare package
-        run: npm-pack         
+        run: npm pack         
 
       - uses: marvinpinto/action-automatic-releases@latest
         with:
