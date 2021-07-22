@@ -29,7 +29,7 @@ jobs:
         run: npm ci      
 
       - name: 'change version'        
+        id: newversion
         run: |
           NEWRELEASETAG=$(npm version ${{github.event.inputs.version}} -m "Release %s") 
           git push --atomic origin main $NEWRELEASETAG
-        

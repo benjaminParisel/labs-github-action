@@ -1,0 +1,35 @@
+name: Publish npm and github release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  tagged-release:
+    name: Tagged Release
+    runs-on:  ubuntu-20.04    
+
+    steps:
+      - name: Install Node      
+        uses: actions/setup-node@v1 
+        with:
+          node-version: '14'          
+
+      - name: build and test
+        run: | 
+          npm ci                    
+          npm run build && npm run test
+
+      - name: Prepare package
+        run: npm-pack         
+
+      - uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false
+          files: |
+            LICENSE
+            *.tgz
+            
+            
