@@ -17,8 +17,10 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
-      - run: git config --global user.email "my-bot@gmail.com"
-      - run: git config --global user.name "Labs workflow github bot"
+        with:          
+          token: ${{secrets.GH_PERSONNAL_ACCES_TOKEN}}
+      # - run: git config --global user.email "my-bot@gmail.com"
+      # - run: git config --global user.name "Labs workflow github bot"
 
       - name: Install Node
         uses: actions/setup-node@v1 
@@ -32,4 +34,4 @@ jobs:
         id: newversion
         run: |
           NEWRELEASETAG=$(npm version ${{github.event.inputs.version}} -m "Release %s") 
-          git push --atomic origin main $NEWRELEASETAG
+          git push --atomic origin main $NEWRELEASETAG        
