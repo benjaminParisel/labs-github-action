@@ -1,0 +1,44 @@
+name: Bump sub project npm version
+
+on:  
+  workflow_dispatch:
+   inputs:
+      version:
+        description: <newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease [--preid=<prerelease-id>
+        default: patch
+        required: true      
+
+
+jobs:
+  deploy:
+    name: Bump NPM version
+    runs-on: ubuntu-20.04    
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+        with:          
+          token: ${{secrets.GH_PERSONNAL_ACCES_TOKEN}}
+      - run: git config --global user.email "my-bot@gmail.com"
+      - run: git config --global user.name "Labs workflow github bot"
+
+      - name: Install Node
+        uses: actions/setup-node@v1 
+        with:
+          node-version: '14'          
+
+      # - name: Install dependencies
+      #   run: npm ci      
+
+      # - name: 'change version'        
+      #   id: newversion
+      #   run: |
+      #     NEWRELEASETAG=$(npm version ${{github.event.inputs.version}} -m "Release %s") 
+      #     git push --atomic origin main $NEWRELEASETAG
+
+      - name: 'change version with reedyuk/npm-version'
+      uses: reedyuk/npm-version@1.1.1
+      with:
+        version: '1.0.1'
+        package: 'sub-npm-project/'
+        git-tag-version: 'true'        
