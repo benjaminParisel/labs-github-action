@@ -36,9 +36,9 @@ jobs:
       #     NEWRELEASETAG=$(npm version ${{github.event.inputs.version}} -m "Release %s") 
       #     git push --atomic origin main $NEWRELEASETAG
 
-      - name: 'change version with reedyuk/npm-version'
-      uses: reedyuk/npm-version@1.1.1
-      with:
-        version: '1.0.1'
-        package: 'sub-npm-project/'
-        git-tag-version: 'true'        
+      - name: change version with reedyuk-npm-version
+        uses: reedyuk/npm-version@1.1.1
+        with:
+          version: '1.0.1'
+          package: 'sub-npm-project/'
+          git-tag-version: 'true'        
