@@ -34,4 +34,14 @@ jobs:
           echo "########################################"
           
           chmod +x ./../labs/src/propagate-doc.sh
-          ./../labs/src/propagate-doc.sh
+          ./../labs/src/propagate-doc.sh     
+
+      - name: Send message to Slack channel
+        if: failure()
+        uses: slackapi/slack-github-action@v1.17.0
+        with:
+          channel-id: 'C02J5M4JMK7'
+          slack-message: "Propagation documentation upwards failed. Please manage conflict manually. \n 
+          For more details, see https://github.com/${{github.repository}}/runs/${{github.run_id}}?check_suite_focus=true"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
