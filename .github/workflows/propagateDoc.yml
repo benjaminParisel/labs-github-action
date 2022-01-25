@@ -41,7 +41,34 @@ jobs:
         uses: slackapi/slack-github-action@v1.17.0
         with:
           channel-id: 'C02J5M4JMK7'
-          slack-message: "Propagation documentation upwards failed. Please manage conflict manually. \n 
-          For more details, see https://github.com/${{github.repository}}/runs/${{github.run_id}}?check_suite_focus=true"
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":fire:  Propagation documentation upwards failed. \n \n  @channel *We need you*, react with :fire_extinguisher: when you resolve the conflicts, and by :sweat_drops: when it will be done."
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "For more details, see <https://github.com/${{github.repository}}/runs/${{github.run_id}}?check_suite_focus=true|this is a link>"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":female-firefighter: Good luck my friend :male-firefighter: "
+                  }
+                }
+              ]
+            }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
