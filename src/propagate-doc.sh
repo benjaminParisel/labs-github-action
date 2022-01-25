@@ -18,8 +18,6 @@ merge() {
     echo "Merging branch '${FROM}' into '${INTO}'"
 
     git fetch --all
-    echo "**** List all branch****"
-    git branch -a
 
     git checkout ${INTO} && git pull
     checkError $? "checking out branch ${INTO}"
@@ -31,11 +29,7 @@ merge() {
         checkError $? "Committing in ${INTO}"
     fi
 
-    echo $(pwd)
-
-    git remote -v
-
-    git push https://github.com/benjaminParisel/gh-pr-diff-checker.git ${INTO}
+    git push origin ${INTO}
 
     checkError $? "pushing remote branch ${INTO}"
 
