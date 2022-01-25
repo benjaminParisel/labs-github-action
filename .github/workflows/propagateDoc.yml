@@ -5,8 +5,6 @@ on:
 jobs:
   propagate-doc-upwards:
     runs-on: ubuntu-20.04
-    env:
-      bonita-slack-channel-id: 'C02J5M4JMK7'
     steps:
       - name: Setup checkout
         uses: actions/checkout@v2
@@ -42,7 +40,7 @@ jobs:
         if: failure()
         uses: slackapi/slack-github-action@v1.17.0
         with:
-          channel-id: ${{bonita-slack-channel-id}}
+          channel-id: 'C02J5M4JMK7'
           payload: |
             {
             "blocks": [
