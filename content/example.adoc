@@ -1,6 +1,0 @@
-= Example
-
-=== Why this files ?
-
-In this file you can found an adoc file to push some update.
-

@@ -1,0 +1,38 @@
+name: Propagate documentation content upwards
+on:
+  workflow_dispatch:
+
+jobs:
+  propagate-doc-upwards:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Setup checkout
+        uses: actions/checkout@v2
+        with:
+          path: ./labs
+      - name: Setup checkout
+        uses: actions/checkout@v2
+        with:
+          repository: benjaminParisel/gh-pr-diff-checker
+          token: ${{ secrets.GH_PERSONNAL_ACCES_TOKEN }}
+          path: ./gh-pr-diff-checker
+
+      - name: Run propagate script
+        run: |          
+          cd ./gh-pr-diff-checker
+          echo "go into gh-pr-diff"
+          echo $(ls)
+          git remote -v
+          
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          
+          # allow to keep our changes when merge=ours specified in .gitattributes
+          git config merge.ours.driver true          
+          
+          ## merge each branch
+          echo "########################################"
+          echo "Performing the doc propagation"
+          echo "########################################"
+          chmod +x ./../labs/src/propagate-doc.sh
+          ./../labs/src/propagate-doc.sh
