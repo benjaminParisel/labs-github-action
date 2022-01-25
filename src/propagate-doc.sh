@@ -17,9 +17,10 @@ merge() {
     INTO=$2
     echo "Merging branch '${FROM}' into '${INTO}'"
 
+    git fetch --all
     echo "**** List all branch****"
     git branch -a
-    git checkout 7.10
+
     git checkout ${INTO} && git pull
     checkError $? "checking out branch ${INTO}"
     git merge --no-commit origin/${FROM}
