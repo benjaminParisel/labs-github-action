@@ -32,8 +32,7 @@ jobs:
           echo "########################################"
           echo "Performing the doc propagation"
           echo "########################################"
-          
-          chmod +x ./../labs/src/propagate-doc.sh
+                    
           ./../labs/src/propagate-doc.sh     
 
       - name: Send message to Slack channel
