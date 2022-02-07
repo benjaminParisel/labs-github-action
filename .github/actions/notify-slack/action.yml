@@ -1,5 +1,5 @@
 name: 'Send message to Slack channel'
-description: 'Send notification on failure'
+description: 'Send notification on slack'
 inputs:
   channel-id:
     description: 'The slack channel id'
@@ -9,6 +9,10 @@ inputs:
     description: 'The message display in first block of notification'
     required: true
     default: ':x: Build on branch ${{github.ref}} failed in UI-Designer.'
+  SLACK_BOT_TOKEN:
+    description: 'The message display in first block of notification'
+    required: true
+    default: ''
 
 runs:
   using: "composite"
@@ -37,4 +41,4 @@ runs:
               ]
           }
       env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        SLACK_BOT_TOKEN: ${{ inputs.SLACK_BOT_TOKEN }}

@@ -19,3 +19,4 @@ jobs:
         with:
           channel-id: 'C02J5M4JMK7'
           message: ':x: A composite action test'
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
