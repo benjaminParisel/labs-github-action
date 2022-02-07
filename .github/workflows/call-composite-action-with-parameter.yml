@@ -1,0 +1,21 @@
+name: Call Composite action
+
+on:
+  workflow_dispatch:
+    inputs:
+
+
+jobs:
+  callCompositeAction:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+        with:
+          token: ${{secrets.GH_PERSONNAL_ACCES_TOKEN}}
+      - name: Notify slack
+        uses: ./.github/actions/notify-slack
+        with:
+          channel-id: 'C02J5M4JMK7'
+          message: 'A composite action test'
