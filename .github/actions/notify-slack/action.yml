@@ -1,0 +1,40 @@
+name: 'Send message to Slack channel'
+description: 'Send notification on failure'
+inputs:
+  channel-id:
+    description: 'The slack channel id'
+    required: true
+    default: 'C02J5M4JMK7'
+  message:
+    description: 'The message display in first block of notification'
+    required: true
+    default: ':x: Build on branch ${{github.ref}} failed in UI-Designer.'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Send message to Slack channel      
+      uses: slackapi/slack-github-action@v1.17.0
+      with:
+        channel-id: ${{ inputs.channel-id}}
+        payload: |
+          {
+              "blocks": [
+                  {
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": "${{inputs.message}}"
+                      }
+                  },
+                  {
+                      "type": "section",
+                      "text": {
+                          "type": "mrkdwn",
+                          "text": "More details about the error <https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}?check_suite_focus=true| here>"
+                      }
+                  }
+              ]
+          }
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
