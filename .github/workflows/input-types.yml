@@ -15,8 +15,8 @@ on:
         type: boolean
         description: Include 🎉🤣 emojis
         default: 'true'
-      environment:
-        type: environment
+      #environment:
+       # type: environment
 
 jobs:
   greet:
