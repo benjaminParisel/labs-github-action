@@ -20,12 +20,10 @@ runs:
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install jo jq
+        sudo apt-get install jo
     - name: List branches
       shell: bash
-      run: |
-        git remote set-branches origin '*'
-        git fetch
+      run: |        
         readarray branches <<< $(git branch --remote --format='%(refname:lstrip=3)' | tr '\n' ' ' | awk '{$1=$1};1')
         json=$(jo -a $branches)
         
@@ -35,10 +33,9 @@ runs:
         for item in "${list_branches[@]}"; do
           list_branches[$i]="^$item$"
           i=$((i+1))
-        done
-        echo "list_branches ${list_branches[@]}"
+        done       
+        
         pattern=$(printf "%s|" "${list_branches[@]}")
-        echo "PATTERN => ${pattern}"
-        echo $json | jq -c 'map(select(test("${pattern%?}")))'        
+        
         echo "##[set-output name=branches;]$(echo $json | jq -c 'map(select(test("${pattern%?}")))')"
       id: extract_branches
