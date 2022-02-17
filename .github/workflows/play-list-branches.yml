@@ -7,12 +7,16 @@ jobs:
   list-branches:
     runs-on: ubuntu-20.04
     steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+        with:
+          token: ${{secrets.GH_PERSONNAL_ACCES_TOKEN}}
       - name: List branches on repo./sitory
         uses: ./.github/actions/list-branches
         with:
           branches_list:  "main 7.11 7.10"
   display_branch_name:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-20.04    
     needs: list-branches
     strategy:
       max-parallel: 2
