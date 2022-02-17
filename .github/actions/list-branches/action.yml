@@ -36,7 +36,9 @@ runs:
           list_branches[$i]="^$item$"
           i=$((i+1))
         done
-        pattern=$(printf "%s|" "${list_branches[@]}")                    
+        echo "list_branches ${list_branches[@]}"
+        pattern=$(printf "%s|" "${list_branches[@]}")
+        echo "PATTERN => ${pattern}"
         echo $json | jq -c 'map(select(test("${pattern%?}")))'        
         echo "##[set-output name=branches;]$(echo $json | jq -c 'map(select(test("${pattern%?}")))')"
       id: extract_branches
