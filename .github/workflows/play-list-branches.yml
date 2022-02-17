@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: List branches on repo./sitory
-        uses: ./.github/actions/list-branches@main
+        uses: ./.github/actions/list-branches
         with:
           branches_list:  "main 7.11 7.10"
   display_branch_name:
