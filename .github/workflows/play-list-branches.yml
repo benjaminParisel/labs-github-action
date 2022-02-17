@@ -11,9 +11,9 @@ jobs:
         uses: ./.github/actions/list-branches@main
         with:
           branches_list:
-          - main
-          - 7.11
-          - 7.10
+            - "main"
+            - "7.11"
+            - "7.10"
   display_branch_name:
     runs-on: ubuntu-20.04
     needs: list-branches
