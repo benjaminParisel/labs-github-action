@@ -24,8 +24,8 @@ runs:
     - name: List branches
       shell: bash
       run: |
-        #git remote set-branches origin '*'
-        #git fetch
+        git remote set-branches origin '*'
+        git fetch
         readarray branches <<< $(git branch --remote --format='%(refname:lstrip=3)' | tr '\n' ' ' | awk '{$1=$1};1')
         json=$(jo -a $branches)
         
@@ -37,6 +37,6 @@ runs:
           i=$((i+1))
         done
         pattern=$(printf "%s|" "${list_branches[@]}")                    
-        
+        echo $json | jq -c 'map(select(test("${pattern%?}")))'        
         echo "##[set-output name=branches;]$(echo $json | jq -c 'map(select(test("${pattern%?}")))')"
       id: extract_branches
