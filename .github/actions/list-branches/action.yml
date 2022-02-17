@@ -21,10 +21,12 @@ runs:
         sudo apt-get install jo
     - name: List branches
       shell: bash
-      run: |        
+      run: |  
+        git remote set-branches origin '*'
+        git fetch
         readarray branches <<< $(git branch --remote --format='%(refname:lstrip=3)' | tr '\n' ' ' | awk '{$1=$1};1')
         json=$(jo -a $branches)
-        
+        echo "json $json"
         # Create regex from branches list input        
         list_branches=(${{inputs.branches_list}})
         i=0
