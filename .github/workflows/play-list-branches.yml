@@ -14,7 +14,7 @@ jobs:
       - name: List branches on repo./sitory
         uses: ./.github/actions/list-branches
         with:
-          branches_list:  "main 7.11 7.10"
+          branches_list:  "main test_master"
   display_branch_name:
     runs-on: ubuntu-20.04    
     needs: list-branches
