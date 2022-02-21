@@ -1,4 +1,4 @@
-name: List branches and run matrix job
+name: List branches and run matrix jobs
 
 on:
   workflow_dispatch:
