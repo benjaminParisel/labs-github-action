@@ -6,6 +6,8 @@ on:
 jobs:
   list-branches:
     runs-on: ubuntu-20.04
+    outputs:
+      branches: ${{ steps.listBranches.outputs.branches }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
@@ -16,10 +18,6 @@ jobs:
         with:
           branches_list:  "main test_master"
         id: listBranches
-      - name: display
-        run: | 
-          echo "=> ${{ fromJSON(steps.listBranches.outputs.branches) }}"
-          echo "display ${{ steps.listBranches.outputs.branches }}"
   display_branch_name:
     runs-on: ubuntu-20.04    
     needs: list-branches
