@@ -15,6 +15,11 @@ jobs:
         uses: ./.github/actions/list-branches
         with:
           branches_list:  "main test_master"
+        id: listBranches
+      - name: display
+        run: | 
+          echo "=> ${{ fromJSON(steps.listBranches.outputs.branches) }}"
+          echo "display ${{ steps.listBranches.outputs.branches }}"
   display_branch_name:
     runs-on: ubuntu-20.04    
     needs: list-branches
@@ -22,7 +27,7 @@ jobs:
       max-parallel: 2
       fail-fast: false
       matrix:
-        branch: ${{fromJSON(needs.list-branches.outputs.branches)}}
+        branch: ${{ fromJSON(needs.list-branches.outputs.branches) }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
