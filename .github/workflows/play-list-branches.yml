@@ -1,4 +1,4 @@
-name: List branches and run matrix job
+name: List branches and run matrix jobs
 
 on:
   workflow_dispatch:
@@ -6,6 +6,8 @@ on:
 jobs:
   list-branches:
     runs-on: ubuntu-20.04
+    outputs:
+      branches: ${{ steps.listBranches.outputs.branches }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
@@ -14,7 +16,8 @@ jobs:
       - name: List branches on repo./sitory
         uses: ./.github/actions/list-branches
         with:
-          branches_list:  "main 7.11 7.10"
+          branches_list:  "main test_master"
+        id: listBranches
   display_branch_name:
     runs-on: ubuntu-20.04    
     needs: list-branches
@@ -22,7 +25,7 @@ jobs:
       max-parallel: 2
       fail-fast: false
       matrix:
-        branch: ${{fromJSON(needs.list-branches.outputs.branches)}}
+        branch: ${{ fromJSON(needs.list-branches.outputs.branches) }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v2
