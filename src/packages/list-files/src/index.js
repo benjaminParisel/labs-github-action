@@ -1,7 +1,5 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import parseDiff from 'parse-diff';
-import {Context} from "@actions/github/lib/context";
 
 async function run() {
     try {
@@ -9,7 +7,7 @@ async function run() {
         const token = core.getInput('github-token', {required: true})
         // const token = core.getInput('github-token', {required: true})
         const octokit = github.getOctokit(token)
-        const context: Context = github.context
+        const context = github.context
 
         // Request the pull request diff from the GitHub API
         // const {data: prDiff} = await octokit.rest.pulls.get({
@@ -37,12 +35,12 @@ async function run() {
         // let inputStringDiff: string = core.getInput('diffDoesNotContain');
         // let diffDoesNotContain: Array<string> = JSON.parse(inputStringDiff);
 
-        let filteredExtensions : Array<string>= JSON.parse(core.getInput("extensionsToCheck"));
+        let filteredExtensions = JSON.parse(core.getInput("extensionsToCheck"));
         // let result: prDiffResult= validate(files, filteredExtensions,diffDoesNotContain);
         // if(!result.isDiffValid) {
         //     core.setFailed(`The PR should not include one of ${diffDoesNotContain.toString()}`);
         // }
-    } catch (error: any) {
+    } catch (error) {
         core.setFailed(error.message);
     }
 }
