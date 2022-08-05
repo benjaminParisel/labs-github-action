@@ -1,0 +1,22 @@
+name: 'List branches on repository'
+description: 'You can customize the message and the channel id.'
+inputs:
+  extensions:
+    description: 'Status file to keep'
+    required: true
+    default: 'added '
+outputs:
+  branches:
+    description: "Json object who contains each branch"
+    value: ${{ steps.extract_branches.outputs.files }}
+runs:
+  using: "composite"
+  steps:
+    - name: List files
+      shell: bash
+      run: |
+        JSON=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" | jq 'map(select( .status as $status | ["modified", "added"] | index($status) ).filename)')
+        
+        echo "::set-output name=branches::$(echo $json | jq -c --arg regex $regex 'map(select(test($regex)?))')"
+      id: extract_branches
+

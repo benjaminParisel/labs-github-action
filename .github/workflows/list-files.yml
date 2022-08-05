@@ -1,0 +1,34 @@
+name: Test
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-action:
+    name: Run action
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        working-directory: src/packages/list-files
+        run: npm ci
+
+      - name: Build
+        working-directory: src/packages/list-files
+        run: npm run build
+
+      - name: Run my action
+        uses: ./src/packages/list-files/

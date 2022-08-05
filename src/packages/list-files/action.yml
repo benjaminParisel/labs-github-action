@@ -1,0 +1,6 @@
+name: 'List all files updates on PR'
+description: 'Get files names updated on target PR'
+
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
