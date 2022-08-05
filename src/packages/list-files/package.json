@@ -2,11 +2,16 @@
   "name": "list-files",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "package": "ncc build src/main.ts --license licenses.txt",
+    "test": "jest"
   },
-  "keywords": ["github","pr-checker"],
+  "keywords": [
+    "github",
+    "pr-checker"
+  ],
   "author": "",
   "license": "MIT",
   "bugs": {
