@@ -1,5 +1,12 @@
 name: Broken link check
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      siteUrl:
+          description: url to check
+          default: 'https://documentation.bonitasoft.com/bonita/2022.2'
+          required: true      
+
 
 jobs:
   broken_link_checker_job:
@@ -11,10 +18,10 @@ jobs:
         uses: celinekurpershoek/link-checker@v1.0.2
         with:
           # Required:
-          url: "https://documentation.bonitasoft.com/bonita/2022.2"
+          url: ${inputs.siteUrl}
           # optional:
           honorRobotExclusions: false
           ignorePatterns: "github,google"
-          recursiveLinks: false # Check all URLs on all reachable pages (could take a while)
+          recursiveLinks: true # Check all URLs on all reachable pages (could take a while)
       - name: Get the result
         run: echo "${{steps.link-report.outputs.result}}"
