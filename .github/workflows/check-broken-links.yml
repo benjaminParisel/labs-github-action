@@ -18,7 +18,7 @@ jobs:
         uses: celinekurpershoek/link-checker@v1.0.2
         with:
           # Required:
-          url: ${{github.event.inputs.version}}
+          url: ${{github.event.inputs.siteUrl}}
           # optional:
           honorRobotExclusions: false
           ignorePatterns: "github,google"
