@@ -8,7 +8,7 @@ on:
           required: true 
 
 jobs:
-  broken_link_checker_job:
+  broken_link_checker_job_v2:
     runs-on: ubuntu-latest
     name: Check for broken links
     steps:
@@ -16,4 +16,4 @@ jobs:
         id: link-report
         uses: elliotforbes/broken-link-checker@1.0.2
         with:
-        url: ${{github.event.inputs.siteUrl}}
+          url: ${{github.event.inputs.siteUrl}}
