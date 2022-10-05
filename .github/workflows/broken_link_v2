@@ -1,0 +1,19 @@
+name: Broken link check v2
+on: 
+  workflow_dispatch:
+    inputs:
+      siteUrl:
+          description: url to check
+          default: 'https://documentation.bonitasoft.com/bonita/2022.2'
+          required: true 
+
+jobs:
+  broken_link_checker_job:
+    runs-on: ubuntu-latest
+    name: Check for broken links
+    steps:
+      - name: Check for broken links
+        id: link-report
+        uses: elliotforbes/broken-link-checker@1.0.2
+        with:
+        url: ${{github.event.inputs.siteUrl}}
