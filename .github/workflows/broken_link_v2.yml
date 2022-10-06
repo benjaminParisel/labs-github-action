@@ -13,7 +13,7 @@ jobs:
     name: Check for broken links
     steps:
       - name: Check for broken links
-        id: link-report
-        uses: elliotforbes/broken-link-checker@1.0.2
+        uses: ruzickap/action-my-broken-link-checker@v2
         with:
           url: ${{github.event.inputs.siteUrl}}
+          cmd_params: "--one-page-only --max-connections=3 --color=always --buffer-size=8192"  # Check just one page
