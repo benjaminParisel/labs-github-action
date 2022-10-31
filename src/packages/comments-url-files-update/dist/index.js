@@ -25,8 +25,9 @@ exports.generateUrl = generateUrl;
 async function getAllLinks() {
     const pr = await (0, github_1.getPullRequest)();
     const prRef = pr.base.ref;
-    console.log('files', (0, core_1.getInput)('files'));
-    const files = JSON.parse((0, core_1.getInput)('files'));
+    console.log('getInput', (0, core_1.getInput)('files'));
+    const files = (0, core_1.getInput)('files').split(' ');
+    console.log('files', files);
     const siteUrl = (0, core_1.getInput)('siteUrl');
     const componentName = (0, core_1.getInput)('componentName');
     return generateUrl(prRef, siteUrl, files, componentName);
