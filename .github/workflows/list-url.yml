@@ -19,7 +19,7 @@ jobs:
           files: |
             modules/**
       - name: Lint pull request title
-        uses: ./
+        uses: ./src/packages/comments-url-files-update
         with:
           componentName: 'bonita'
           siteUrl: 'https://documentation.bonitasoft.com'
