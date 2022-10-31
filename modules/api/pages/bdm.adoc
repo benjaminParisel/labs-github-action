@@ -1,3 +1,4 @@
 == BDM
 
+You can store what your want in BDM
 [...]
