@@ -1,25 +1,37 @@
-import {
-    buildMessage,
-    createPrComment,
-    deletePrComment,
-    getPullRequest,
-} from './github';
+import {createPrComment, getPullRequest} from './github';
 import {getInput} from '@actions/core';
 
-export function getAllLinks(){
+export function generateUrl(
+  prRef: string,
+  siteUrl: string,
+  files: Array<string>,
+  componentName: string
+) {
+  const urls: string[] = [];
+  files.forEach(file => {
+    const splitted = file.split('/');
+    splitted.shift();
+    const pageName = splitted.pop();
+    const moduleName = splitted.shift();
 
+    urls.push(
+      `${siteUrl}/${componentName}/${prRef}${
+        moduleName === 'ROOT' ? '/' : `/${moduleName}/`
+      }${pageName?.split('.').shift()}`
+    );
+  });
+  return urls.join('\n');
 }
 
+export async function getAllLinks(): Promise<string> {
+  const pr = await getPullRequest();
+  const prRef = pr.base.ref;
+  const files: Array<string> = JSON.parse(getInput('files'));
+  const siteUrl = getInput('siteUrl');
+  const componentName = getInput('componentName');
+  return generateUrl(prRef, siteUrl, files, componentName);
+}
 
-export async function getAllLinks(siteUrl: string,) {
-
-
-        if (getInput('comment') === 'true') {
-            await createPrComment();
-        }
-
-        return false;
-
-    await deletePrComment();
-    return true;
+export async function listUrl() {
+  await createPrComment();
 }

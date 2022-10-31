@@ -1,6 +1,7 @@
 import {context, getOctokit} from '@actions/github';
 import {getInput, setSecret} from '@actions/core';
 import {GitHub} from '@actions/github/lib/utils';
+import {getAllLinks} from './build-url';
 
 let octokit: InstanceType<typeof GitHub>;
 let once = false;
@@ -25,29 +26,13 @@ export async function getPullRequest() {
   return pr;
 }
 
-export function buildMessage(): string {
+export async function buildMessage(): Promise<string> {
   const header = '## Pull request title linting :rotating_light:\n\n';
   const preface =
-    'In order to merge this pull request, the title of the pull request ' +
-    'should be prefixed by one of the available types.\n\n';
-  //const availableTypes = `### Available types:\n\n${getConventionalCommitTypes()}\n\n`;
-  const availableTypes = `### Available types:\n\n\n\n`;
-  const separator = '---\n\n';
-  const examples = `<details>
-<summary>Examples</summary>
+    'In order to merge this pull request, you need to check your changes with the following url.\n\n';
 
-\`\`\`
-feat(grpc): add new endpoint
-refactor: combine class A and class B
-ci: update pull request linter
-style: change format of strings
-\`\`\`
-
-</details>\n\n`;
-  const footer =
-    ':tipping_hand_person: For more examples, visit https://www.conventionalcommits.org/en/v1.0.0/#examples.';
-
-  return header + preface + availableTypes + separator + examples + footer;
+  const availableTypes = `### Url to check: ${await getAllLinks()}\n\n\n\n`;
+  return header + preface + availableTypes;
 }
 
 type CommentExists = {
@@ -77,22 +62,8 @@ async function isCommentExists(body: string): Promise<CommentExists> {
   };
 }
 
-export async function deletePrComment() {
-  const body = buildMessage();
-  const {exists, id} = await isCommentExists(body);
-
-  if (exists && id) {
-    await getClient().rest.issues.deleteComment({
-      owner: context.repo.owner,
-      issue_number: context.issue.number,
-      repo: context.repo.repo,
-      comment_id: id,
-    });
-  }
-}
-
 export async function createPrComment() {
-  const body = buildMessage();
+  const body = await buildMessage();
   const {exists} = await isCommentExists(body);
 
   if (!exists) {

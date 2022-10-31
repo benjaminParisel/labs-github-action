@@ -1,0 +1,27 @@
+name: Pull Request files edit url
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+jobs:
+  list-url-files-pr:
+    name: List url files on pr
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v34
+        with:
+          files: |
+            modules/**
+      - name: Lint pull request title
+        uses: ./
+        with:
+          componentName: 'bonita'
+          siteUrl: 'https://documentation.bonitasoft.com'
+          files: ${{ steps.changed-files.outputs.all_changed_files }}
+          token: ${{ secrets.GITHUB_TOKEN }}

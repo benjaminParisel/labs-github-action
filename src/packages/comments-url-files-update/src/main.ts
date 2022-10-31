@@ -1,14 +1,15 @@
 import {setFailed} from '@actions/core';
+import {listUrl} from './build-url';
 
 /**
  * Entrypoint for action.
  */
 export async function entrypoint() {
-    try {
-        //Todo: add something here
-    } catch (error: unknown) {
-        setFailed(error as Error);
-    }
+  try {
+    await listUrl();
+  } catch (error: unknown) {
+    setFailed(error as Error);
+  }
 }
 
 void entrypoint();
