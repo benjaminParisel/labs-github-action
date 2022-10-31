@@ -1,4 +1,4 @@
-import {createPrComment, getPullRequest} from './github';
+import {createPrComment, deletePrComment, getPullRequest} from './github';
 import {getInput} from '@actions/core';
 
 export function generateUrl(
@@ -34,4 +34,6 @@ export async function getAllLinks(): Promise<string> {
 
 export async function listUrl() {
   await createPrComment();
+  //Delete oldest comments if exist
+  await deletePrComment();
 }

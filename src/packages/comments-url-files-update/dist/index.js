@@ -17,7 +17,7 @@ function generateUrl(prRef, siteUrl, files, componentName) {
         splitted.shift();
         const pageName = splitted.pop();
         const moduleName = splitted.shift();
-        urls.push(`${siteUrl}/${componentName}/${prRef}${moduleName === 'ROOT' ? '/' : `/${moduleName}/`}${pageName === null || pageName === void 0 ? void 0 : pageName.split('.').shift()}`);
+        urls.push(`- ${siteUrl}/${componentName}/${prRef}${moduleName === 'ROOT' ? '/' : `/${moduleName}/`}${pageName === null || pageName === void 0 ? void 0 : pageName.split('.').shift()}`);
     });
     return urls.join('\n');
 }
@@ -25,9 +25,7 @@ exports.generateUrl = generateUrl;
 async function getAllLinks() {
     const pr = await (0, github_1.getPullRequest)();
     const prRef = pr.base.ref;
-    console.log('getInput', (0, core_1.getInput)('files'));
     const files = (0, core_1.getInput)('files').split(' ');
-    console.log('files', files);
     const siteUrl = (0, core_1.getInput)('siteUrl');
     const componentName = (0, core_1.getInput)('componentName');
     return generateUrl(prRef, siteUrl, files, componentName);
@@ -35,6 +33,8 @@ async function getAllLinks() {
 exports.getAllLinks = getAllLinks;
 async function listUrl() {
     await (0, github_1.createPrComment)();
+    //Delete oldest comments if exist
+    await (0, github_1.deletePrComment)();
 }
 exports.listUrl = listUrl;
 //# sourceMappingURL=build-url.js.map
@@ -47,7 +47,7 @@ exports.listUrl = listUrl;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createPrComment = exports.buildMessage = exports.getPullRequest = void 0;
+exports.deletePrComment = exports.createPrComment = exports.buildMessage = exports.getPullRequest = void 0;
 const github_1 = __nccwpck_require__(5438);
 const core_1 = __nccwpck_require__(2186);
 const build_url_1 = __nccwpck_require__(8393);
@@ -72,10 +72,10 @@ async function getPullRequest() {
 }
 exports.getPullRequest = getPullRequest;
 async function buildMessage() {
-    const header = '## Pull request title linting :rotating_light:\n\n';
-    const preface = 'In order to merge this pull request, you need to check your changes with the following url.\n\n';
-    const availableTypes = `### Url to check: ${await (0, build_url_1.getAllLinks)()}\n\n\n\n`;
-    return header + preface + availableTypes;
+    const header = '## Pull request files update :memo:\n\n';
+    const preface = 'In order to merge this pull request, you need to check your updates with the following url.\n\n';
+    const availableLinks = `### Url to check: \n ${await (0, build_url_1.getAllLinks)()}\n\n\n\n`;
+    return header + preface + availableLinks;
 }
 exports.buildMessage = buildMessage;
 async function isCommentExists(body) {
@@ -110,6 +110,19 @@ async function createPrComment() {
     }
 }
 exports.createPrComment = createPrComment;
+async function deletePrComment() {
+    const body = await buildMessage();
+    const { exists, id } = await isCommentExists(body);
+    if (exists && id) {
+        await getClient().rest.issues.deleteComment({
+            owner: github_1.context.repo.owner,
+            issue_number: github_1.context.issue.number,
+            repo: github_1.context.repo.repo,
+            comment_id: id,
+        });
+    }
+}
+exports.deletePrComment = deletePrComment;
 //# sourceMappingURL=github.js.map
 
 /***/ }),

@@ -75,3 +75,17 @@ export async function createPrComment() {
     });
   }
 }
+
+export async function deletePrComment() {
+  const body = await buildMessage();
+  const {exists, id} = await isCommentExists(body);
+
+  if (exists && id) {
+    await getClient().rest.issues.deleteComment({
+      owner: context.repo.owner,
+      issue_number: context.issue.number,
+      repo: context.repo.repo,
+      comment_id: id,
+    });
+  }
+}
