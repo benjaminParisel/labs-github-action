@@ -33,8 +33,6 @@ async function getAllLinks() {
 exports.getAllLinks = getAllLinks;
 async function listUrl() {
     await (0, github_1.createPrComment)();
-    //Delete oldest comments if exist
-    //await deletePrComment();
 }
 exports.listUrl = listUrl;
 //# sourceMappingURL=build-url.js.map
@@ -47,12 +45,13 @@ exports.listUrl = listUrl;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.deletePrComment = exports.createPrComment = exports.buildMessage = exports.getPullRequest = void 0;
+exports.createPrComment = exports.buildMessage = exports.getPullRequest = void 0;
 const github_1 = __nccwpck_require__(5438);
 const core_1 = __nccwpck_require__(2186);
 const build_url_1 = __nccwpck_require__(8393);
 let octokit;
 let once = false;
+const HEADER = '## Pull request files update :memo:\n\n';
 function getClient() {
     if (once)
         return octokit;
@@ -72,20 +71,20 @@ async function getPullRequest() {
 }
 exports.getPullRequest = getPullRequest;
 async function buildMessage() {
-    const header = '## Pull request files update :memo:\n\n';
     const preface = 'In order to merge this pull request, you need to check your updates with the following url.\n\n';
     const availableLinks = `### Url to check: \n ${await (0, build_url_1.getAllLinks)()}\n\n\n\n`;
-    return header + preface + availableLinks;
+    return HEADER + preface + availableLinks;
 }
 exports.buildMessage = buildMessage;
-async function isCommentExists(body) {
+async function isCommentExists() {
+    var _a;
     const { data: comments } = await getClient().rest.issues.listComments({
         owner: github_1.context.repo.owner,
         issue_number: github_1.context.issue.number,
         repo: github_1.context.repo.repo,
     });
     for (const comment of comments) {
-        if (comment.body === body) {
+        if ((_a = comment.body) === null || _a === void 0 ? void 0 : _a.startsWith(HEADER)) {
             return {
                 exists: true,
                 id: comment.id,
@@ -99,20 +98,8 @@ async function isCommentExists(body) {
 }
 async function createPrComment() {
     const body = await buildMessage();
-    const { exists } = await isCommentExists(body);
-    if (!exists) {
-        await getClient().rest.issues.createComment({
-            owner: github_1.context.repo.owner,
-            issue_number: github_1.context.issue.number,
-            repo: github_1.context.repo.repo,
-            body,
-        });
-    }
-}
-exports.createPrComment = createPrComment;
-async function deletePrComment() {
-    const body = await buildMessage();
-    const { exists, id } = await isCommentExists(body);
+    const { exists, id } = await isCommentExists();
+    // Delete oldest comment if another comments exist
     if (exists && id) {
         await getClient().rest.issues.deleteComment({
             owner: github_1.context.repo.owner,
@@ -121,8 +108,14 @@ async function deletePrComment() {
             comment_id: id,
         });
     }
+    await getClient().rest.issues.createComment({
+        owner: github_1.context.repo.owner,
+        issue_number: github_1.context.issue.number,
+        repo: github_1.context.repo.repo,
+        body,
+    });
 }
-exports.deletePrComment = deletePrComment;
+exports.createPrComment = createPrComment;
 //# sourceMappingURL=github.js.map
 
 /***/ }),
