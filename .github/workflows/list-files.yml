@@ -5,26 +5,8 @@ on:
     types: [opened, edited, synchronize]
 
 jobs:
-  listFiles:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - id: files
-        name: Detect changed files
-        uses: jitterbit/get-changed-files@v1
-        with:
-          format: 'json'
-      - name: Display json files updated writing
-        shell: bash
-        run: |
-          echo "json result outputs: ${{ steps.files.outputs }}"
-          readarray -t added_modified_files <<<"$(jq -r '.[]' <<<'${{ steps.files.outputs.added_modified }}')"
-          for added_file in ${added_modified[@]}; do
-            echo "Do something with this ${added_file}."
-          done
   anotherWayToListFiles:
     runs-on: ubuntu-latest
-    name: anotherWayToListFiles
     steps:
       - uses: actions/checkout@v3
       - name: Get changed files
