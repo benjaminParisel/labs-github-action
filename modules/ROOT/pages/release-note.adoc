@@ -1,3 +1,4 @@
 = Release note
 
+The new release is amazing
 [...]
