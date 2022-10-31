@@ -35,5 +35,5 @@ export async function getAllLinks(): Promise<string> {
 export async function listUrl() {
   await createPrComment();
   //Delete oldest comments if exist
-  await deletePrComment();
+  //await deletePrComment();
 }

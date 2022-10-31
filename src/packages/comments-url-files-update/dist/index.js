@@ -34,7 +34,7 @@ exports.getAllLinks = getAllLinks;
 async function listUrl() {
     await (0, github_1.createPrComment)();
     //Delete oldest comments if exist
-    await (0, github_1.deletePrComment)();
+    //await deletePrComment();
 }
 exports.listUrl = listUrl;
 //# sourceMappingURL=build-url.js.map
