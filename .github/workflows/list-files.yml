@@ -6,6 +6,7 @@ on:
 
 jobs:
   listFiles:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - id: files
@@ -16,8 +17,23 @@ jobs:
       - name: Display json files updated writing
         shell: bash
         run: |
-          echo "json result: ${{ steps.files.outputs.added_modified }}"
+          echo "json result outputs: ${{ steps.files.outputs }}"
           readarray -t added_modified_files <<<"$(jq -r '.[]' <<<'${{ steps.files.outputs.added_modified }}')"
-          for removed_file in ${added_modified[@]}; do
-            echo "Do something with this ${added_modified_files}."
+          for added_file in ${added_modified[@]}; do
+            echo "Do something with this ${added_file}."
           done
+  anotherWayToListFiles:
+    runs-on: ubuntu-latest
+    name: anotherWayToListFiles
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v34
+
+      - name: List all changed files
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
+  
