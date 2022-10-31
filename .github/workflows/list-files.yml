@@ -22,18 +22,18 @@ jobs:
           for added_file in ${added_modified[@]}; do
             echo "Do something with this ${added_file}."
           done
-    anotherWayToListFiles:
-      runs-on: ubuntu-latest
-      name: anotherWayToListFiles
-      steps:
-        - uses: actions/checkout@v3
-        - name: Get changed files
-          id: changed-files
-          uses: tj-actions/changed-files@v34
+  anotherWayToListFiles:
+    runs-on: ubuntu-latest
+    name: anotherWayToListFiles
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v34
 
-        - name: List all changed files
-          run: |
-            for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-              echo "$file was changed"
-            done
+      - name: List all changed files
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
   
