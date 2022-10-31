@@ -1,0 +1,23 @@
+name: List updates_files on pull request
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  listFiles:
+    steps:
+      - uses: actions/checkout@v3
+      - id: files
+        name: Detect changed files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'json'
+      - name: Display json files updated writing
+        shell: bash
+        run: |
+          echo "json result: ${{ steps.files.outputs.added_modified }}"
+          readarray -t added_modified_files <<<"$(jq -r '.[]' <<<'${{ steps.files.outputs.added_modified }}')"
+          for removed_file in ${added_modified[@]}; do
+            echo "Do something with this ${added_modified_files}."
+          done
