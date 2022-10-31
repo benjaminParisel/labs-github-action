@@ -26,6 +26,7 @@ export function generateUrl(
 export async function getAllLinks(): Promise<string> {
   const pr = await getPullRequest();
   const prRef = pr.base.ref;
+  console.log('files', getInput('files'));
   const files: Array<string> = JSON.parse(getInput('files'));
   const siteUrl = getInput('siteUrl');
   const componentName = getInput('componentName');
