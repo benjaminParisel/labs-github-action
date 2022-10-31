@@ -15,7 +15,7 @@ export function generateUrl(
     const moduleName = splitted.shift();
 
     urls.push(
-      `${siteUrl}/${componentName}/${prRef}${
+      `- ${siteUrl}/${componentName}/${prRef}${
         moduleName === 'ROOT' ? '/' : `/${moduleName}/`
       }${pageName?.split('.').shift()}`
     );
@@ -26,9 +26,7 @@ export function generateUrl(
 export async function getAllLinks(): Promise<string> {
   const pr = await getPullRequest();
   const prRef = pr.base.ref;
-  console.log('getInput', getInput('files'));
   const files: Array<string> = getInput('files').split(' ');
-  console.log('files', files);
   const siteUrl = getInput('siteUrl');
   const componentName = getInput('componentName');
   return generateUrl(prRef, siteUrl, files, componentName);

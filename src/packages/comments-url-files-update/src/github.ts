@@ -27,12 +27,12 @@ export async function getPullRequest() {
 }
 
 export async function buildMessage(): Promise<string> {
-  const header = '## Pull request title linting :rotating_light:\n\n';
+  const header = '## Pull request files update :memo:\n\n';
   const preface =
-    'In order to merge this pull request, you need to check your changes with the following url.\n\n';
+    'In order to merge this pull request, you need to check your updates with the following url.\n\n';
 
-  const availableTypes = `### Url to check: ${await getAllLinks()}\n\n\n\n`;
-  return header + preface + availableTypes;
+  const availableLinks = `### Url to check: \n ${await getAllLinks()}\n\n\n\n`;
+  return header + preface + availableLinks;
 }
 
 type CommentExists = {
