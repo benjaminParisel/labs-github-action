@@ -23,6 +23,11 @@ export function generateUrl(
   return urls.join('\n');
 }
 
+export function getDeletedFiles() {
+  const deleted = getInput('deleted-files').split(' ');
+  return deleted.map(file => `- ${file}`).join('\n');
+}
+
 export async function getAllLinks(): Promise<string> {
   const pr = await getPullRequest();
   const prRef = pr.base.ref;

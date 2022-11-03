@@ -7,6 +7,9 @@ inputs:
   files:
     required: true
     description: All files add or update by the PR
+  deleted-files:
+    required: false
+    description: All files deleted or renamed by the PR
   componentName:
     required: false
     description: The component name

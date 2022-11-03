@@ -1,7 +1,7 @@
 import {context, getOctokit} from '@actions/github';
 import {getInput, setSecret} from '@actions/core';
 import {GitHub} from '@actions/github/lib/utils';
-import {getAllLinks} from './build-url';
+import {getAllLinks, getDeletedFiles} from './build-url';
 
 let octokit: InstanceType<typeof GitHub>;
 let once = false;
@@ -32,6 +32,13 @@ export async function buildMessage(): Promise<string> {
     'In order to merge this pull request, you need to check your updates with the following url.\n\n';
 
   const availableLinks = `### Url to check: \n ${await getAllLinks()}\n\n\n\n`;
+
+  const deleted = getDeletedFiles();
+  const warningDeleted =
+    ':warning: At least one file are deleted on this pull request, be sure to adding [alias](https://github.com/bonitasoft/bonita-documentation-site/blob/master/docs/content/CONTRIBUTING.adoc#use-alias-to-create-redirects) \n \n';
+  if (deleted) {
+    return HEADER + preface + availableLinks + warningDeleted + deleted;
+  }
   return HEADER + preface + availableLinks;
 }
 
