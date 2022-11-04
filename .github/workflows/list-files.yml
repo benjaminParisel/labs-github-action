@@ -17,6 +17,23 @@ jobs:
         with:
           files: |
             modules/**
+      - name: Get files url
+        uses: actions/github-script@v6
+        id: set-result
+        with:
+          script: |
+            let files=${{steps.changed-files.outputs.all_changed_and_modified_files}};
+            const siteUrl='http://localhost/';
+            const componentName='bonita';            
+            files.forEach(file => {
+             const splitted = file.split('/');
+             splitted.shift();
+             const pageName = splitted.pop();
+             const moduleName = splitted.shift();
+             urls.push(`- ${siteUrl}/${componentName}/${{github.base_ref}}${moduleName === 'ROOT' ? '/' : `/${moduleName}/`}${pageName?.split('.').shift()}`);
+            });           
+            return urls.join('\n');
+          result-encoding: string
       - name: List all changed files
         id: build-urls
         run: |
@@ -32,8 +49,7 @@ jobs:
             [[ ${strarr[0]} = "ROOT" ]] && moduleName="/" || moduleName="/${strarr[0]}/"
             #Last element 'page.name'
             pageName=${strarr[${#strarr[@]} - 1]}             
-            urls+="- https://documenation.bonitasoft.com/bonita/${{github.base_ref}}${moduleName}${pageName%.*}
-          "
+            urls+="https://documenation.bonitasoft.com/bonita/${{github.base_ref}}${moduleName}${pageName%.*}"
           done          
           echo "updated_files_url=$urls" >> $GITHUB_OUTPUT
           echo $urls
@@ -50,7 +66,7 @@ jobs:
         with:
           template: .github/comment-template.md
           vars: |
-            urlFiles: ${{ steps.build-urls.outputs.updated_files_url }}
+            urlFiles: ${{steps.set-result.outputs.result}}
       - name: Create or update comment
         uses: peter-evans/create-or-update-comment@v2
         with:
