@@ -25,16 +25,18 @@ jobs:
             #Read the split words into an array based on / delimiter
             IFS='/'
             read -a strarr <<< "$file"
+            IFS=''
             #unset "modules" from array
             strarr=("${strarr[@]:1}")
             #Get module name if not ROOT
-            [ [ ${strarr[0]} = "ROOT" ] ] && moduleName="/" || moduleName="/${strarr[0]}/"
+            [[ ${strarr[0]} = "ROOT" ]] && moduleName="/" || moduleName="/${strarr[0]}/"
             #Last element 'page.name'
-            pageName=${strarr[${#strarr[@]} - 1]}
-            urls="${res}
-            - https://documenation.bonitasoft.com/bonita/${github.base_ref}${moduleName}${pageName%.*}"
-          done
-          echo "updated_files_url=$res" >> $GITHUB_OUTPUT
+            pageName=${strarr[${#strarr[@]} - 1]}             
+            urls+="- https://documenation.bonitasoft.com/bonita/${{github.base_ref}}${moduleName}${pageName%.*}
+          "
+          done          
+          echo "updated_files_url=$urls" >> $GITHUB_OUTPUT
+          echo $urls
       - name: Find Comment
         uses: peter-evans/find-comment@v2
         id: fc
@@ -42,17 +44,18 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
           body-includes: ''## Pull request files update :memo:'
+      - name: Render template
+        id: template
+        uses: chuhlomin/render-template@v1.4
+        with:
+          template: .github/comment-template.md
+          vars: |
+            urlFiles: ${{ steps.build-urls.outputs.updated_files_url }}
       - name: Create or update comment
         uses: peter-evans/create-or-update-comment@v2
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            ## Pull request files update :memo:
-            
-            In order to merge this pull request, you need to check your updates with the following url.
-            
-            ### Url to check:            
-            ${{ steps.build-urls.outputs.updated_files_url }}
+          body: ${{ steps.template.outputs.result }}
           edit-mode: replace
 
