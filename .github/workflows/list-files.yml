@@ -22,60 +22,48 @@ jobs:
         id: set-result
         env:
           FILES: ${{steps.changed-files.outputs.all_changed_and_modified_files}}
+          SITE_URL: 'http://localhost/'
+          COMPONENT_NAME: 'bonita'
         with:
           script: |
-            let {FILES}=process.env
-            const siteUrl='http://localhost/';
-            const componentName='bonita';        
-            console.log('files',FILES);
-            FILES.forEach(file => {
+            let {FILES,SITE_URL,COMPONENT_NAME}=process.env
+             const {data: pr} = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                pull_number: context.issue.number,
+                repo: context.repo.repo,
+            });
+            let files = FILES.split('/')  
+            let urls=[];
+            console.log('files', files)
+            files.forEach(file => {
              const splitted = file.split('/');
              splitted.shift();
              const pageName = splitted.pop();
              const moduleName = splitted.shift();
-             urls.push(`- ${siteUrl}/${componentName}/${{github.base_ref}}${moduleName === 'ROOT' ? '/' : `/${moduleName}/`}${pageName?.split('.').shift()}`);
-            });           
-            return urls.join('\n');    
-            return "";
+             urls.push(`- ${SITE_URL}/${COMPONENT_NAME}/${pr.base.ref}${moduleName === 'ROOT' ? '/' : `/${moduleName}/`}${pageName?.split('.').shift()}`);
+            });            
+            console.log('urls',urls.join('\n'));
+            return urls.join('\n');
           result-encoding: string
-      - name: List all changed files
-        id: build-urls
-        run: |
-          urls=""
-          for file in ${{steps.changed-files.outputs.all_changed_and_modified_files}}; do
-            #Read the split words into an array based on / delimiter
-            IFS='/'
-            read -a strarr <<< "$file"
-            IFS=''
-            #unset "modules" from array
-            strarr=("${strarr[@]:1}")
-            #Get module name if not ROOT
-            [[ ${strarr[0]} = "ROOT" ]] && moduleName="/" || moduleName="/${strarr[0]}/"
-            #Last element 'page.name'
-            pageName=${strarr[${#strarr[@]} - 1]}             
-            urls+="https://documenation.bonitasoft.com/bonita/${{github.base_ref}}${moduleName}${pageName%.*}"
-          done          
-          echo "updated_files_url=$urls" >> $GITHUB_OUTPUT
-          echo $urls
-      - name: Find Comment
-        uses: peter-evans/find-comment@v2
-        id: fc
+      - name: Create or update comments
+        uses: actions/github-script@v6
+        env:
+          LINKS: ${{steps.set-result.outputs.result}}
         with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: ''## Pull request files update :memo:'
-      - name: Render template
-        id: template
-        uses: chuhlomin/render-template@v1.4
-        with:
-          template: .github/comment-template.md
-          vars: |
-            urlFiles: ${{steps.set-result.outputs.result}}
-      - name: Create or update comment
-        uses: peter-evans/create-or-update-comment@v2
-        with:
-          comment-id: ${{ steps.fc.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: ${{ steps.template.outputs.result }}
-          edit-mode: replace
+          script: |
+            let {LINKS} = process.env
+            const HEADER='## Pull request files update :memo:\n\n';
+            const preface =
+            'In order to merge this pull request, you need to check your updates with the following url.\n\n';
+        
+            const availableLinks = `### Url to check: \n ${LINKS}\n\n\n\n`;
+        
+            let body =  HEADER + preface + availableLinks;
+            await github.rest.issues.createComment({
+             issue_number: context.issue.number,
+             owner: context.repo.owner,
+             repo: context.repo.repo,
+             body: body
+            })
+          result-encoding: string
 
