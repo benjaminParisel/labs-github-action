@@ -20,19 +20,23 @@ jobs:
       - name: Get files url
         uses: actions/github-script@v6
         id: set-result
+        env:
+          FILES: ${{steps.changed-files.outputs.all_changed_and_modified_files}}
         with:
           script: |
-            let files=${{steps.changed-files.outputs.all_changed_and_modified_files}};
+            let {FILES}=process.en
             const siteUrl='http://localhost/';
-            const componentName='bonita';            
-            files.forEach(file => {
+            const componentName='bonita';        
+            console.log('files',FILES);
+            FILES.forEach(file => {
              const splitted = file.split('/');
              splitted.shift();
              const pageName = splitted.pop();
              const moduleName = splitted.shift();
              urls.push(`- ${siteUrl}/${componentName}/${{github.base_ref}}${moduleName === 'ROOT' ? '/' : `/${moduleName}/`}${pageName?.split('.').shift()}`);
             });           
-            return urls.join('\n');
+            return urls.join('\n');    
+            return "";
           result-encoding: string
       - name: List all changed files
         id: build-urls
