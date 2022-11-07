@@ -22,27 +22,26 @@ jobs:
         id: set-result
         env:
           FILES: ${{steps.changed-files.outputs.all_changed_and_modified_files}}
-          SITE_URL: 'http://localhost/'
+          SITE_URL: 'http://localhost'
           COMPONENT_NAME: 'bonita'
         with:
-          script: |
-            let {FILES,SITE_URL,COMPONENT_NAME}=process.env
+          script: |            
+            let {FILES,SITE_URL,COMPONENT_NAME}=process.env;            
              const {data: pr} = await github.rest.pulls.get({
                 owner: context.repo.owner,
                 pull_number: context.issue.number,
                 repo: context.repo.repo,
             });
-            let files = FILES.split('/')  
-            let urls=[];
-            console.log('files', files)
+            let files = FILES.split(' ');
+            console.log('files => ', files);              
+            let urls=[];            
             files.forEach(file => {
              const splitted = file.split('/');
              splitted.shift();
              const pageName = splitted.pop();
              const moduleName = splitted.shift();
              urls.push(`- ${SITE_URL}/${COMPONENT_NAME}/${pr.base.ref}${moduleName === 'ROOT' ? '/' : `/${moduleName}/`}${pageName?.split('.').shift()}`);
-            });            
-            console.log('urls',urls.join('\n'));
+            });
             return urls.join('\n');
           result-encoding: string
       - name: Create or update comments
@@ -59,6 +58,23 @@ jobs:
             const availableLinks = `### Url to check: \n ${LINKS}\n\n\n\n`;
         
             let body =  HEADER + preface + availableLinks;
+            const {data: comments} = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                issue_number: context.issue.number,
+                repo: context.repo.repo,
+            });
+            
+            for (const comment of comments) {
+              if (comment.body?.startsWith(HEADER)) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  issue_number: context.issue.number,
+                  repo: context.repo.repo,
+                  comment_id: comment.id,
+                });
+              };
+            }
+            
             await github.rest.issues.createComment({
              issue_number: context.issue.number,
              owner: context.repo.owner,
