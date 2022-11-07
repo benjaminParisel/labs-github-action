@@ -24,7 +24,7 @@ jobs:
           FILES: ${{steps.changed-files.outputs.all_changed_and_modified_files}}
         with:
           script: |
-            let {FILES}=process.en
+            let {FILES}=process.env
             const siteUrl='http://localhost/';
             const componentName='bonita';        
             console.log('files',FILES);
