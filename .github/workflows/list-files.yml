@@ -48,22 +48,38 @@ jobs:
         uses: actions/github-script@v6
         env:
           LINKS: ${{steps.set-result.outputs.result}}
+          RENAMED_FILES: ${{steps.changed-files.outputs.renamed_files}}
+          HAS_DELETED_FILES: ${{steps.changed-files.outputs.any_deleted}}
         with:
           script: |
-            let {LINKS} = process.env
+            let {LINKS, RENAMED_FILES, HAS_DELETED_FILES} = process.env;
+            console.log('RENAMED_FILES => ',RENAMED_FILES === undefined, RENAMED_FILES === null);
+            console.log('HAS_DELETED_FILES => ',HAS_DELETED_FILES);
+            //Adding deleted or renamed check
+            let warningAliasMessage = '';
+            if(HAS_DELETED_FILES){
+              console.log('if DELETED =>',HAS_DELETED_FILES);
+            }
+            if(RENAMED_FILES != ''){
+              console.log('if RENAMED_FILES =>',RENAMED_FILES);
+            }
+            if(HAS_DELETED_FILES || RENAMED_FILES != ''){
+              warningAliasMessage="\n \n ### :warning: Somes files are deleted or renamed, don\'t forget to add [alias](https://github.com/bonitasoft/bonita-documentation-site/blob/master/docs/content/CONTRIBUTING.adoc#use-alias-to-create-redirects)"
+            }
+
             const HEADER='## Pull request files update :memo:\n\n';
             const preface =
             'In order to merge this pull request, you need to check your updates with the following url.\n\n';
-        
+
             const availableLinks = `### Url to check: \n ${LINKS}\n\n\n\n`;
-        
-            let body =  HEADER + preface + availableLinks;
+
+            let body =  HEADER + preface + availableLinks + warningAliasMessage;
             const {data: comments} = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 issue_number: context.issue.number,
                 repo: context.repo.repo,
             });
-            
+
             for (const comment of comments) {
               if (comment.body?.startsWith(HEADER)) {
                 await github.rest.issues.deleteComment({
@@ -74,7 +90,7 @@ jobs:
                 });
               };
             }
-            
+
             await github.rest.issues.createComment({
              issue_number: context.issue.number,
              owner: context.repo.owner,
