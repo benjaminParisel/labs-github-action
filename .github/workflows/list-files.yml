@@ -39,7 +39,7 @@ jobs:
           COMPONENT_NAME: 'bonita'
         with:
           script: |            
-            const script = require('./.github/github.js');
+            const script = require('./.github/comments-with-url-links.js');
             return await script.prepareUrlLinks({github, context})
           result-encoding: string
       - name: Create or update comments
@@ -50,7 +50,7 @@ jobs:
           HAS_DELETED_FILES: ${{steps.changed-files.outputs.any_deleted}}
         with:
           script: |
-            const script = require('./.github/github.js');
+            const script = require('./.github/comments-with-url-links.js');
             await script.createOrUpdateComments({github, context})
           result-encoding: string
 
