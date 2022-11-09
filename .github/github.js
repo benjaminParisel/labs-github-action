@@ -16,6 +16,7 @@ module.exports = {
                 const moduleName = splitted.shift();
                 urls.push(`- ${SITE_URL}/${COMPONENT_NAME}/${pr.base.ref}${moduleName === 'ROOT' ? '/' : `/${moduleName}/`}${pageName?.split('.').shift()}`);
             });
+            console.log('url',urls);
             return urls.join('\n');
     }
 };
