@@ -1,3 +1,5 @@
+const searchComment = require('./comments');
+
 module.exports = {
     prepareUrlLinks:  async function ({github, context}) {
             let {FILES, SITE_URL, COMPONENT_NAME} = process.env;
@@ -27,7 +29,7 @@ module.exports = {
             issue_number: context.issue.number,
             repo: context.repo.repo,
         });
-
+        searchComment();
         for (const comment of comments) {
             if (comment.body?.startsWith(HEADER)) {
                 await github.rest.issues.deleteComment({
