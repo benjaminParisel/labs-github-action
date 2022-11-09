@@ -40,7 +40,7 @@ jobs:
         with:
           script: |            
             const script = require('./.github/github.js');
-            await script({github, context})
+            await script.prepareUrlLinks({github, context})
           result-encoding: string
       - name: Create or update comments
         uses: actions/github-script@v6
