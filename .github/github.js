@@ -5,7 +5,6 @@ module.exports = {
             issue_number: context.issue.number,
             repo: context.repo.repo,
         });
-
         for (const comment of comments) {
             if (comment.body?.startsWith(header)) {
                 return {
@@ -29,11 +28,12 @@ module.exports = {
         })
     },
     deleteComment: async function ({github, context, commentIdToDelete}) {
+        console.log('delete id', commentIdToDelete);
         await github.rest.issues.deleteComment({
-            owner: context.repo.owner,
             issue_number: context.issue.number,
+            owner: context.repo.owner,
             repo: context.repo.repo,
-            comment_id: commentIdToDelete
+            comment_id: commentIdToDelete,
         });
     }
 }

@@ -22,15 +22,12 @@ module.exports = {
     createOrUpdateComments: async function ({github,context}){
         let {LINKS, RENAMED_FILES, HAS_DELETED_FILES} = process.env;
         const header='## :memo: Pull request files update\n\n';
-
         let body = buildMessage(header,LINKS,HAS_DELETED_FILES === 'true' || RENAMED_FILES != '');
-
-        const {exists, id} = await githubUtils.isCommentExist({github,context,HEADER: header});
-        console.log('delete', exists,id);
+        const {exists, id} = await githubUtils.isCommentExist({github,context,header});
         // Delete oldest comment if another comments exist
-        if (exists && id) {
-            console.log('if delete', exists,id);
-            await githubUtils.deleteComment({github,context,HEADER: header});
+        if (exists && id){
+            console.log('createOrUpdateComments', id);
+            await githubUtils.deleteComment({github,context,commentIdToDelete: id});
         }
         await githubUtils.createComment({github,context,body});
     }
