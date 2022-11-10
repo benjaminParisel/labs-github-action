@@ -5,8 +5,10 @@ module.exports = {
             issue_number: context.issue.number,
             repo: context.repo.repo,
         });
+        console.log('header', header);
         for (const comment of comments) {
             if (comment.body?.startsWith(header)) {
+                console.log('comment.id', comment.id);
                 return {
                     exists: true,
                     id: comment.id,
