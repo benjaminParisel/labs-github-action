@@ -2,7 +2,7 @@ const githubUtils = require('./github');
 const template = '<!-- previewLinksCheck-->\n';
 module.exports = {
     prepareUrlLinks: async function ({github, context}) {
-        let {FILES,DELETED, SITE_URL, COMPONENT_NAME} = process.env;
+        let {FILES,DELETED,RENAMED, SITE_URL, COMPONENT_NAME} = process.env;
         const {data: pr} = await github.rest.pulls.get({
             owner: context.repo.owner,
             pull_number: context.issue.number,
@@ -14,24 +14,22 @@ module.exports = {
         return res;
     },
     createOrUpdateComments: async function ({github, context}) {
-        let {LINKS, RENAMED_FILES, HAS_DELETED_FILES} = process.env;
+        let {LINKS, HAS_DELETED_FILES} = process.env;
         const header = '## :memo: Check the pages that have been modified\n\n';
-        let newBody = buildMessage({header, links: JSON.parse(LINKS),hasWarnigMessage : HAS_DELETED_FILES === 'true' || RENAMED_FILES != ''});
-        const {exists, id, body} = await githubUtils.isCommentExist({github, context, template: template});
+        let links = JSON.parse(LINKS);
+        let body = buildMessage({header, links ,hasWarningMessage : (HAS_DELETED_FILES === 'true')});
+        const {exists, id} = await githubUtils.isCommentExist({github, context, template: template});
         // Delete oldest comment if another comments exist
-        if (exists && id && body === newBody) {
-            await githubUtils.updateComment({github, context, comment_id: id, body: newBody});
+        if (exists && id) {
+            await githubUtils.updateComment({github, context, comment_id: id, body});
             return id;
         }
-        const comment = await githubUtils.createComment({github, context, body: newBody});
+        const comment = await githubUtils.createComment({github, context, body});
         return comment?.id;
     }
 };
 
 function buildMessage({header, links, hasWarningMessage}) {
-    console.log('links - ', links);
-    console.log('links.updated', links.updated);
-    console.log('links.deleted', links.deleted);
     const preface =
         'In order to merge this pull request, you need to check your updates with the following url.\n\n';
 
@@ -39,7 +37,7 @@ function buildMessage({header, links, hasWarningMessage}) {
     //Adding deleted or renamed check
     let warningAliasMessage = '';
     if (hasWarningMessage) {
-        warningAliasMessage = `\n \n ### :warning: At least one page has been deleted in the Pull Request. Make sure to add [aliases](https://github.com/bonitasoft/bonita-documentation-site/blob/master/docs/content/CONTRIBUTING.adoc#use-alias-to-create-redirects) \n ${links?.deleted} \n`
+        warningAliasMessage = `\n \n ### :warning: Alias \n At least one page has been renamed, moved or deleted in the Pull Request. Make sure to add [aliases](https://github.com/bonitasoft/bonita-documentation-site/blob/master/docs/content/CONTRIBUTING.adoc#use-alias-to-create-redirects) \n ${links?.deleted} \n`
     }
 
     return template + header + preface + availableLinks + warningAliasMessage;
