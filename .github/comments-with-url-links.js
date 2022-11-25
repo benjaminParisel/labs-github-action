@@ -8,10 +8,10 @@ module.exports = {
             pull_number: context.issue.number,
             repo: context.repo.repo,
         });
-        let res = {};
-        res.updated = prepareLinks({files: FILES.split(' '), siteUrl: SITE_URL, component: COMPONENT_NAME, branch: pr.base.ref});
-        res.deleted = prepareLinks({files: DELETED.split(' '), siteUrl: SITE_URL, component: COMPONENT_NAME, branch: pr.base.ref});
-        return res;
+        let result = {};
+        result.updated = prepareLinks({files: FILES.split(' '), siteUrl: SITE_URL, component: COMPONENT_NAME, branch: pr.base.ref});
+        result.deleted = prepareLinks({files: DELETED.split(' '), siteUrl: SITE_URL, component: COMPONENT_NAME, branch: pr.base.ref});
+        return result;
     },
     createOrUpdateComments: async function ({github, context}) {
         let {LINKS, HAS_DELETED_FILES} = process.env;
@@ -34,10 +34,15 @@ function buildMessage({header, links, hasWarningMessage}) {
         'In order to merge this pull request, you need to check your updates with the following url.\n\n';
 
     const availableLinks = `### :mag: Page list: \n ${links.updated}\n\n\n\n`;
-    //Adding deleted or renamed check
     let warningAliasMessage = '';
     if (hasWarningMessage) {
-        warningAliasMessage = `\n \n ### :warning: Alias \n At least one page has been renamed, moved or deleted in the Pull Request. Make sure to add [aliases](https://github.com/bonitasoft/bonita-documentation-site/blob/master/docs/content/CONTRIBUTING.adoc#use-alias-to-create-redirects) \n ${links?.deleted} \n`
+        warningAliasMessage = ` 
+ ### :warning: Alias 
+ At least one page has been renamed, moved or deleted in the Pull Request.
+ Make sure to add [aliases](https://github.com/bonitasoft/bonita-documentation-site/blob/master/docs/content/CONTRIBUTING.adoc#use-alias-to-create-redirects) 
+ and verify if this following link redirect in the right place 
+ ${links?.deleted} 
+`
     }
 
     return template + header + preface + availableLinks + warningAliasMessage;
