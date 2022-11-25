@@ -28,7 +28,10 @@ module.exports = {
     }
 };
 
-function buildMessage({header, links, deletedLinks, hasWarningMessage}) {
+function buildMessage({header, links, hasWarningMessage}) {
+    console.log('links', links);
+    console.log('links.updated', links.updated);
+    console.log('links.deleted', links.deleted);
     const preface =
         'In order to merge this pull request, you need to check your updates with the following url.\n\n';
 

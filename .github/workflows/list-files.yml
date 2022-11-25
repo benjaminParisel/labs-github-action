@@ -41,7 +41,7 @@ jobs:
           SITE_URL: 'http://localhost'
           COMPONENT_NAME: 'bonita'
         with:
-          script: |            
+          script: |
             const script = require('./.github/comments-with-url-links.js');
             return await script.prepareUrlLinks({github, context})
       - name: Create or update comments
