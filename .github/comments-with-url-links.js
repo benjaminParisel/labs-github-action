@@ -25,15 +25,12 @@ module.exports = {
         const header='## :memo: Check the pages that have been modified\n\n';
         let newBody = buildMessage(header,LINKS,HAS_DELETED_FILES === 'true' || RENAMED_FILES != '');
         const {exists, id, body} = await githubUtils.isCommentExist({github,context,template: template});
-        console.log('####### id',id);
-        console.table({"id":id,"body":body});
         // Delete oldest comment if another comments exist
         if (exists && id && body === newBody){
             await githubUtils.updateComment({github,context,comment_id: id, body: newBody});
             return id;
         }
         const comment = await githubUtils.createComment({github,context,body: newBody});
-        console.log('####### comment',comment);
         return comment?.id;
     }
 };
