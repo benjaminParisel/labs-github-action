@@ -15,7 +15,7 @@ module.exports = {
     },
     createOrUpdateComments: async function ({github, context}) {
         let {LINKS, HAS_DELETED_FILES} = process.env;
-        const header = '## :memo: Check the pages that have been modified\n\n';
+        const header = '## :memo: Check the pages that have been modified \n\n';
         let links = JSON.parse(LINKS);
         let body = buildMessage({header, links ,hasWarningMessage : (HAS_DELETED_FILES === 'true')});
         const {exists, id} = await githubUtils.isCommentExist({github, context, template: template});
