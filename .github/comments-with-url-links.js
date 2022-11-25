@@ -29,10 +29,10 @@ module.exports = {
         console.table({"id":id,"body":body});
         // Delete oldest comment if another comments exist
         if (exists && id && body === newBody){
-            await githubUtils.updateComment({github,context,comment_id: id, newBody});
+            await githubUtils.updateComment({github,context,comment_id: id, body: newBody});
             return id;
         }
-        const comment = await githubUtils.createComment({github,context,newBody});
+        const comment = await githubUtils.createComment({github,context,body: newBody});
         console.log('####### comment',comment);
         return comment?.id;
     }
