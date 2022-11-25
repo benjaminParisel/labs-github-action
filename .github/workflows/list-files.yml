@@ -21,7 +21,6 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v34
         with:
-          include_all_old_new_renamed_files: "true"
           files: |
             modules/**
       - name: List files
@@ -32,19 +31,19 @@ jobs:
           done
           
           echo "deleted => ${{ steps.changed-files.outputs.deleted_files }}"
-          echo "renamed => ${{ steps.changed-files.outputs.all_old_new_renamed_files }}"
+          echo "renamed => ${{ steps.changed-files.outputs.renamed_files }}"
       - name: Get files url
         uses: actions/github-script@v6
         id: set-result
         env:
           FILES: ${{steps.changed-files.outputs.all_changed_files}}
+          DELETED: ${{steps.changed-files.outputs.deleted_files}}
           SITE_URL: 'http://localhost'
           COMPONENT_NAME: 'bonita'
         with:
           script: |            
             const script = require('./.github/comments-with-url-links.js');
             return await script.prepareUrlLinks({github, context})
-          result-encoding: string
       - name: Create or update comments
         uses: actions/github-script@v6
         env:
