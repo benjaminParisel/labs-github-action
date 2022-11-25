@@ -51,6 +51,8 @@ jobs:
         with:
           script: |
             const script = require('./.github/comments-with-url-links.js');
-            await script.createOrUpdateComments({github, context})
+            let commentId = await script.createOrUpdateComments({github, context})
+            console.log('commentId',commentId);
+            return commentId;
           result-encoding: string
 
