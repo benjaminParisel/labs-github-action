@@ -1,0 +1,13 @@
+name: Update Worflow name
+run-name: Update ${{github.ref}} by @${{ github.actor }}
+
+on:  
+  workflow_dispatch:
+
+
+jobs:
+  update_name:
+    runs-on: ubuntu-22.04   
+    steps:      
+      - uses: actions/checkout@v2
+      - run: echo "Coucou"
