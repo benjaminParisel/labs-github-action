@@ -10,18 +10,16 @@ on:
           - monalisa
           - cschleiden
       message:
+        description: Message to add in log
         required: true
       use-emoji:
         type: boolean
         description: Include 🎉🤣 emojis
-        default: 'true'
-      #environment:
-       # type: environment
+        default: true
 
 jobs:
   greet:
     runs-on: ubuntu-latest
-
     steps:
       - name: Send greeting
         run: echo "${{ github.event.inputs.message }} ${{ fromJSON('["", "🥳"]')[github.event.inputs.use-emoji == 'true'] }} ${{ github.event.inputs.name }}"
