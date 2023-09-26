@@ -33,7 +33,7 @@ describe('CommentsUrlPr tests', () => {
       siteUrl: siteUrl,
       componentName: 'bonita',
       expected:
-        'https://documentation.bonitasoft.com/bonita/2022.1/applications/appearance\nhttps://documentation.bonitasoft.com/bonita/2022.1/process/actors\nhttps://documentation.bonitasoft.com/bonita/2022.1/bonita-bpm-applications-urls',
+        '- https://documentation.bonitasoft.com/bonita/2022.1/applications/appearance\n- https://documentation.bonitasoft.com/bonita/2022.1/process/actors\n- https://documentation.bonitasoft.com/bonita/2022.1/bonita-bpm-applications-urls',
     },
     {
       args: '2022.1',
@@ -41,7 +41,7 @@ describe('CommentsUrlPr tests', () => {
       siteUrl: siteUrl,
       componentName: 'bcd',
       expected:
-        'https://documentation.bonitasoft.com/bcd/2022.1/applications/appearance\nhttps://documentation.bonitasoft.com/bcd/2022.1/process/actors\nhttps://documentation.bonitasoft.com/bcd/2022.1/bonita-bpm-applications-urls',
+        '- https://documentation.bonitasoft.com/bcd/2022.1/applications/appearance\n- https://documentation.bonitasoft.com/bcd/2022.1/process/actors\n- https://documentation.bonitasoft.com/bcd/2022.1/bonita-bpm-applications-urls',
     },
     {
       args: '2023.1',
@@ -49,7 +49,7 @@ describe('CommentsUrlPr tests', () => {
       siteUrl: siteUrl,
       componentName: 'bonita',
       expected:
-        'https://documentation.bonitasoft.com/bonita/2023.1/applications/appearance\nhttps://documentation.bonitasoft.com/bonita/2023.1/process/actors\nhttps://documentation.bonitasoft.com/bonita/2023.1/bonita-bpm-applications-urls',
+        '- https://documentation.bonitasoft.com/bonita/2023.1/applications/appearance\n- https://documentation.bonitasoft.com/bonita/2023.1/process/actors\n- https://documentation.bonitasoft.com/bonita/2023.1/bonita-bpm-applications-urls',
     },
   ];
 

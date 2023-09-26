@@ -4,6 +4,7 @@ on:
     types:
       - opened
       - edited
+      - synchronize
       - reopened
 jobs:
   list-url-files-pr:
@@ -24,4 +25,5 @@ jobs:
           componentName: 'bonita'
           siteUrl: 'https://documentation.bonitasoft.com'
           files: ${{ steps.changed-files.outputs.all_changed_files }}
+          deleted-files: ${{ steps.changed-files.outputs.renamed_files }}
           token: ${{ secrets.GITHUB_TOKEN }}

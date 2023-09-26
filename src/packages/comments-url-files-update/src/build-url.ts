@@ -15,7 +15,7 @@ export function generateUrl(
     const moduleName = splitted.shift();
 
     urls.push(
-      `${siteUrl}/${componentName}/${prRef}${
+      `- ${siteUrl}/${componentName}/${prRef}${
         moduleName === 'ROOT' ? '/' : `/${moduleName}/`
       }${pageName?.split('.').shift()}`
     );
@@ -23,10 +23,15 @@ export function generateUrl(
   return urls.join('\n');
 }
 
+export function getDeletedFiles() {
+  const deleted = getInput('deleted-files').split(' ');
+  return deleted.map(file => `- ${file}`).join('\n');
+}
+
 export async function getAllLinks(): Promise<string> {
   const pr = await getPullRequest();
   const prRef = pr.base.ref;
-  const files: Array<string> = JSON.parse(getInput('files'));
+  const files: Array<string> = getInput('files').split(' ');
   const siteUrl = getInput('siteUrl');
   const componentName = getInput('componentName');
   return generateUrl(prRef, siteUrl, files, componentName);

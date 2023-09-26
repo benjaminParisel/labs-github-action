@@ -7,7 +7,7 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.listUrl = exports.getAllLinks = exports.generateUrl = void 0;
+exports.listUrl = exports.getAllLinks = exports.getDeletedFiles = exports.generateUrl = void 0;
 const github_1 = __nccwpck_require__(9738);
 const core_1 = __nccwpck_require__(2186);
 function generateUrl(prRef, siteUrl, files, componentName) {
@@ -17,15 +17,20 @@ function generateUrl(prRef, siteUrl, files, componentName) {
         splitted.shift();
         const pageName = splitted.pop();
         const moduleName = splitted.shift();
-        urls.push(`${siteUrl}/${componentName}/${prRef}${moduleName === 'ROOT' ? '/' : `/${moduleName}/`}${pageName === null || pageName === void 0 ? void 0 : pageName.split('.').shift()}`);
+        urls.push(`- ${siteUrl}/${componentName}/${prRef}${moduleName === 'ROOT' ? '/' : `/${moduleName}/`}${pageName === null || pageName === void 0 ? void 0 : pageName.split('.').shift()}`);
     });
     return urls.join('\n');
 }
 exports.generateUrl = generateUrl;
+function getDeletedFiles() {
+    const deleted = (0, core_1.getInput)('deleted-files').split(' ');
+    return deleted.map(file => `- ${file}`).join('\n');
+}
+exports.getDeletedFiles = getDeletedFiles;
 async function getAllLinks() {
     const pr = await (0, github_1.getPullRequest)();
     const prRef = pr.base.ref;
-    const files = JSON.parse((0, core_1.getInput)('added_modified_files'));
+    const files = (0, core_1.getInput)('files').split(' ');
     const siteUrl = (0, core_1.getInput)('siteUrl');
     const componentName = (0, core_1.getInput)('componentName');
     return generateUrl(prRef, siteUrl, files, componentName);
@@ -51,6 +56,7 @@ const core_1 = __nccwpck_require__(2186);
 const build_url_1 = __nccwpck_require__(8393);
 let octokit;
 let once = false;
+const HEADER = '## Pull request files update :memo:\n\n';
 function getClient() {
     if (once)
         return octokit;
@@ -70,20 +76,25 @@ async function getPullRequest() {
 }
 exports.getPullRequest = getPullRequest;
 async function buildMessage() {
-    const header = '## Pull request title linting :rotating_light:\n\n';
-    const preface = 'In order to merge this pull request, you need to check your changes with the following url.\n\n';
-    const availableTypes = `### Url to check: ${await (0, build_url_1.getAllLinks)()}\n\n\n\n`;
-    return header + preface + availableTypes;
+    const preface = 'In order to merge this pull request, you need to check your updates with the following url.\n\n';
+    const availableLinks = `### Url to check: \n ${await (0, build_url_1.getAllLinks)()}\n\n\n\n`;
+    const deleted = (0, build_url_1.getDeletedFiles)();
+    const warningDeleted = ':warning: At least one file are deleted on this pull request, be sure to adding [alias](https://github.com/bonitasoft/bonita-documentation-site/blob/master/docs/content/CONTRIBUTING.adoc#use-alias-to-create-redirects) \n \n';
+    if (deleted) {
+        return HEADER + preface + availableLinks + warningDeleted + deleted;
+    }
+    return HEADER + preface + availableLinks;
 }
 exports.buildMessage = buildMessage;
-async function isCommentExists(body) {
+async function isCommentExists() {
+    var _a;
     const { data: comments } = await getClient().rest.issues.listComments({
         owner: github_1.context.repo.owner,
         issue_number: github_1.context.issue.number,
         repo: github_1.context.repo.repo,
     });
     for (const comment of comments) {
-        if (comment.body === body) {
+        if ((_a = comment.body) === null || _a === void 0 ? void 0 : _a.startsWith(HEADER)) {
             return {
                 exists: true,
                 id: comment.id,
@@ -97,15 +108,22 @@ async function isCommentExists(body) {
 }
 async function createPrComment() {
     const body = await buildMessage();
-    const { exists } = await isCommentExists(body);
-    if (!exists) {
-        await getClient().rest.issues.createComment({
+    const { exists, id } = await isCommentExists();
+    // Delete oldest comment if another comments exist
+    if (exists && id) {
+        await getClient().rest.issues.deleteComment({
             owner: github_1.context.repo.owner,
             issue_number: github_1.context.issue.number,
             repo: github_1.context.repo.repo,
-            body,
+            comment_id: id,
         });
     }
+    await getClient().rest.issues.createComment({
+        owner: github_1.context.repo.owner,
+        issue_number: github_1.context.issue.number,
+        repo: github_1.context.repo.repo,
+        body,
+    });
 }
 exports.createPrComment = createPrComment;
 //# sourceMappingURL=github.js.map

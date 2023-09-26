@@ -1,0 +1,4 @@
+== BDM renamed
+
+You can store what your want in BDM (People/Object/Food)
+[...]

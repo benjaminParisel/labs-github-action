@@ -1,10 +1,11 @@
 import {context, getOctokit} from '@actions/github';
 import {getInput, setSecret} from '@actions/core';
 import {GitHub} from '@actions/github/lib/utils';
-import {getAllLinks} from './build-url';
+import {getAllLinks, getDeletedFiles} from './build-url';
 
 let octokit: InstanceType<typeof GitHub>;
 let once = false;
+const HEADER = '## Pull request files update :memo:\n\n';
 
 function getClient(): InstanceType<typeof GitHub> {
   if (once) return octokit;
@@ -27,12 +28,18 @@ export async function getPullRequest() {
 }
 
 export async function buildMessage(): Promise<string> {
-  const header = '## Pull request title linting :rotating_light:\n\n';
   const preface =
-    'In order to merge this pull request, you need to check your changes with the following url.\n\n';
+    'In order to merge this pull request, you need to check your updates with the following url.\n\n';
 
-  const availableTypes = `### Url to check: ${await getAllLinks()}\n\n\n\n`;
-  return header + preface + availableTypes;
+  const availableLinks = `### Url to check: \n ${await getAllLinks()}\n\n\n\n`;
+
+  const deleted = getDeletedFiles();
+  const warningDeleted =
+    ':warning: At least one file are deleted on this pull request, be sure to adding [alias](https://github.com/bonitasoft/bonita-documentation-site/blob/master/docs/content/CONTRIBUTING.adoc#use-alias-to-create-redirects) \n \n';
+  if (deleted) {
+    return HEADER + preface + availableLinks + warningDeleted + deleted;
+  }
+  return HEADER + preface + availableLinks;
 }
 
 type CommentExists = {
@@ -40,7 +47,7 @@ type CommentExists = {
   id: number | null;
 };
 
-async function isCommentExists(body: string): Promise<CommentExists> {
+async function isCommentExists(): Promise<CommentExists> {
   const {data: comments} = await getClient().rest.issues.listComments({
     owner: context.repo.owner,
     issue_number: context.issue.number,
@@ -48,7 +55,7 @@ async function isCommentExists(body: string): Promise<CommentExists> {
   });
 
   for (const comment of comments) {
-    if (comment.body === body) {
+    if (comment.body?.startsWith(HEADER)) {
       return {
         exists: true,
         id: comment.id,
@@ -64,14 +71,20 @@ async function isCommentExists(body: string): Promise<CommentExists> {
 
 export async function createPrComment() {
   const body = await buildMessage();
-  const {exists} = await isCommentExists(body);
-
-  if (!exists) {
-    await getClient().rest.issues.createComment({
+  const {exists, id} = await isCommentExists();
+  // Delete oldest comment if another comments exist
+  if (exists && id) {
+    await getClient().rest.issues.deleteComment({
       owner: context.repo.owner,
       issue_number: context.issue.number,
       repo: context.repo.repo,
-      body,
+      comment_id: id,
     });
   }
+  await getClient().rest.issues.createComment({
+    owner: context.repo.owner,
+    issue_number: context.issue.number,
+    repo: context.repo.repo,
+    body,
+  });
 }
