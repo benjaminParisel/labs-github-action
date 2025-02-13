@@ -2,8 +2,6 @@ name: Call Composite action
 
 on:
   workflow_dispatch:
-    inputs:
-
 
 jobs:
   callCompositeAction:
