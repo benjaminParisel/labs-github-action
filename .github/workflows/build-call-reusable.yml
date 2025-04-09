@@ -1,0 +1,11 @@
+name: Call Reusable Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    uses: ./.github/workflows/_reusable_build.yml
+    secrets: inherit
+    with:
+      force-build-src: true

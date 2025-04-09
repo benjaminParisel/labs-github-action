@@ -1,0 +1,48 @@
+name: Build with input
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        default: ${{ github.ref }}
+        description: The branch ref to build. Leave empty to use workflow branch.
+      force-build-src:
+        type: boolean
+        default: false
+        description: Set to `true` to force building the source code.
+
+# Cancel the previous concurrent workflow if a new one is triggered
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  evaluate-variables:
+    uses: ./.github/workflows/_reusable_evaluate_variable.yml
+    with:
+      ref: ${{ inputs.ref }}
+      force-build-src: ${{ inputs.force-build-src }}
+    secrets: inherit
+
+  build-client:
+    needs: evaluate-variables
+    if: |
+      needs.evaluate-variables.outputs.client-src-changed == 'true'
+    runs-on: Ubuntu-22.04
+    steps:
+        - name: 🛠️ Build client
+          run: |
+            echo "Building client..."            
+
+
+  build-server:
+    needs: evaluate-variables
+    if: |
+      needs.evaluate-variables.outputs.server-src-changed == 'true'
+    runs-on: Ubuntu-22.04
+    steps:
+      - name: 🛠️ Build Server
+        run: |
+          echo "Building server..."
+

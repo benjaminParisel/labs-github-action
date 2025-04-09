@@ -1,0 +1,57 @@
+name: Evaluate Variables
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        default: ${{ github.ref }}
+      force-build-src:
+        type: boolean
+        default: false
+
+    outputs:
+      client-src-changed:
+        description: "Indicates if client source files have changed"
+        value: ${{ jobs.evaluate-variables.outputs.client-src-changed }}
+      server-src-changed:
+        description: "Indicates if server source files have changed"
+        value: ${{ jobs.evaluate-variables.outputs.server-src-changed }}
+
+jobs:
+  evaluate-variables:
+    timeout-minutes: 5
+    runs-on: ubuntu-22.04
+    outputs:
+      client-src-changed: ${{ steps.compute-outputs.outputs.client-src-changed }}
+      server-src-changed: ${{ steps.compute-outputs.outputs.server-src-changed }}
+    steps:
+      - name: ↙️ Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+          token: ${{ secrets.GH_PERSONNAL_ACCES_TOKEN }}
+
+      - name: 🔍 Display variable
+        id: display-variable
+        run: |
+          echo "ref=${{ inputs.ref }}"
+          echo "force-build-src=${{ inputs.force-build-src }}"
+          echo "boolean force-build-src=${{ inputs.force-build-src == 'true' }}"
+          echo "GITHUB_REF=${{ github.ref }}"
+          echo "GITHUB_SHA=${{ github.sha }}"
+          echo "GITHUB_EVENT_NAME=${{ github.event_name }}"
+          echo "GITHUB_WORKFLOW=${{ github.workflow }}"
+          echo "GITHUB_RUN_ID=${{ github.run_id }}"
+          echo "GITHUB_RUN_NUMBER=${{ github.run_number }}"
+
+      - name: 🛠️ Compute outputs
+        id: compute-outputs
+        env:
+          CLIENT_SRC_CHANGED: ${{ inputs.force-build-src }}
+          SERVER_SRC_CHANGED: ${{ inputs.force-build-src }}
+        run: |
+          {
+            echo "client-src-changed=${{ env.CLIENT_SRC_CHANGED }}"
+            echo "server-src-changed=${{ env.SERVER_SRC_CHANGED }}"
+          } >> $GITHUB_OUTPUT
