@@ -32,12 +32,25 @@ jobs:
           ref: ${{ inputs.ref }}
           token: ${{ secrets.GH_TOKEN_WORKFLOW }}
 
+      - name: 🔍 Generate boolean output
+        id: toto
+        run: |
+          echo "client-src_any_modified='false'" >> $GITHUB_OUTPUT
+
+
       - name: 🔍 Display variable
         id: display-variable
         run: |
           echo "ref=${{ inputs.ref }}"
-          echo "force-build-src=${{ inputs.force-build-src }}"
+          echo "changed-file=${{ steps.toto.outputs.client-src_any_modified  }}"
+          echo "boolean changed-file=${{ steps.toto.outputs.client-src_any_modified == 'true'}}"
+          echo "string force-build-src=${{ inputs.force-build-src }}"
           echo "boolean force-build-src=${{ inputs.force-build-src == 'true' }}"
+          echo "boolean boolean + force-build-src =${{ steps.toto.outputs.client-src_any_modified || inputs.force-build-src }}"
+          echo "string string + force-build-src =${{ steps.toto.outputs.client-src_any_modified || inputs.force-build-src }}"
+          echo "string + boolean =${{ steps.toto.outputs.client-src_any_modified == 'true' || inputs.force-build-src }}"
+          echo "boolean + string =${{ steps.toto.outputs.client-src_any_modified || inputs.force-build-src  == 'true'}}"
+          echo "boolean changed-file + force-build-src =${{ steps.toto.outputs.client-src_any_modified == 'true' || inputs.force-build-src == 'true' }}"
           echo "GITHUB_REF=${{ github.ref }}"
           echo "GITHUB_SHA=${{ github.sha }}"
           echo "GITHUB_EVENT_NAME=${{ github.event_name }}"
@@ -48,7 +61,7 @@ jobs:
       - name: 🛠️ Compute outputs
         id: compute-outputs
         env:
-          CLIENT_SRC_CHANGED: ${{ inputs.force-build-src }}
+          CLIENT_SRC_CHANGED: ${{ steps.changed-files.outputs.client-src_any_modified || inputs.force-build-src }}
           SERVER_SRC_CHANGED: ${{ inputs.force-build-src }}
         run: |
           {
