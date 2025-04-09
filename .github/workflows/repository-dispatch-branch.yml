@@ -5,14 +5,14 @@ on:
 
 jobs:
   labsTriggerRepositoryDispatch:
-    name: Create release    
+    name: Create release
     runs-on: ubuntu-latest
     steps:
       - name: Setup checkout
-        uses: actions/checkout@v2   
-      - name: Run repository-dispatch        
+        uses: actions/checkout@v2
+      - name: Run repository-dispatch
         uses: peter-evans/repository-dispatch@v1
         with:
-          token: ${{ secrets.GH_PERSONNAL_ACCES_TOKEN }}
-          event-type: github-repository-dispatch 
-          client-payload: '{"ref": "${{ github.ref }}"}'     
+          token: ${{ secrets.GH_TOKEN_WORKFLOW }}
+          event-type: github-repository-dispatch
+          client-payload: '{"ref": "${{ github.ref }}"}'

@@ -1,37 +1,37 @@
 name: Bump Npm version
 
-on:  
+on:
   workflow_dispatch:
    inputs:
       version:
         description: <newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease [--preid=<prerelease-id>
         default: patch
-        required: true      
+        required: true
 
 
 jobs:
   deploy:
     name: Bump NPM version
-    runs-on: ubuntu-20.04    
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
-        with:          
-          token: ${{secrets.GH_PERSONNAL_ACCES_TOKEN}}
+        with:
+          token: ${{secrets.GH_TOKEN_WORKFLOW}}
       - run: git config --global user.email "my-bot@gmail.com"
       - run: git config --global user.name "Labs workflow github bot"
 
       - name: Install Node
-        uses: actions/setup-node@v1 
+        uses: actions/setup-node@v1
         with:
-          node-version: '14'          
+          node-version: '14'
 
       - name: Install dependencies
-        run: npm ci      
+        run: npm ci
 
-      - name: 'change version'        
+      - name: 'change version'
         id: newversion
         run: |
           NEWRELEASETAG=$(npm version ${{github.event.inputs.version}} -m "Release %s") 
-          git push --atomic origin main $NEWRELEASETAG        
+          git push --atomic origin main $NEWRELEASETAG

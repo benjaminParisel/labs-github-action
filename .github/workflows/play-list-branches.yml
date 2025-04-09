@@ -12,14 +12,14 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v2
         with:
-          token: ${{secrets.GH_PERSONNAL_ACCES_TOKEN}}
+          token: ${{secrets.GH_TOKEN_WORKFLOW}}
       - name: List branches on repo./sitory
         uses: ./.github/actions/list-branches
         with:
           branches_list:  "main test_master"
         id: listBranches
   display_branch_name:
-    runs-on: ubuntu-20.04    
+    runs-on: ubuntu-20.04
     needs: list-branches
     strategy:
       max-parallel: 2
