@@ -2,10 +2,6 @@ name: Compress Images
 on:
   workflow_call: # this allows the workflow to be reused
 
-  # permissions:
-#   pull-requests: write
-#   contents: write
-
 jobs:
   compress:
     # The GITHUB_TOKEN only has read permissions when the Pull Request is created from a forked repositories

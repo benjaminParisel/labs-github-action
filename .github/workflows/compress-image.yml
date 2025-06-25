@@ -8,11 +8,6 @@ on:
       - '**.png'
       - '**.webp'
       - '.github/workflows/compress-images.yml'
-
-permissions:
-  pull-requests: write
-  contents: write
-
 jobs:
   compress:
     permissions:
