@@ -8,14 +8,10 @@ on:
       - '**.png'
       - '**.webp'
       - '.github/workflows/compress-images.yml'
-
-permissions:
-  pull-requests: write
-  contents: write
-
 jobs:
   compress:
     permissions:
+      contents: write
       pull-requests: write # "afc163/surge-preview@v1" write PR comments when the PR is deployed
     uses: ./.github/workflows/_reusable_compress-images.yml
-    secrets: inherit
+    #secrets: inherit
