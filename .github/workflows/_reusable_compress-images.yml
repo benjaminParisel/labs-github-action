@@ -9,9 +9,9 @@ jobs:
     if: ${{ !github.event.pull_request.head.repo.fork }}
     name: calibreapp/image-actions
     runs-on: ubuntu-22.04
-    permissions:
-      pull-requests: write # "afc163/surge-preview@v1" write PR comments when the PR is deployed
-      contents: write
+    # permissions:
+    #   pull-requests: write # "afc163/surge-preview@v1" write PR comments when the PR is deployed
+    #   contents: write
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
