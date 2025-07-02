@@ -1,0 +1,12 @@
+name: Nightly Image Compression
+on:
+  workflow_dispatch:
+
+jobs:
+  compress-images:
+    uses: ./.github/workflows/_reusable_compress_images_nightly.yml
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
+    with:
+      pr-title: 'Compressed Images Nightly'
+      branch-suffix: 'timestamp'
