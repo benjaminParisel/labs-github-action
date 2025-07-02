@@ -1,15 +1,15 @@
-name: Compress Images Nighltly
+name: Compress Images Nightly
 on:
   workflow_call:
     inputs:
       pr-title:
         description: 'Title of the Pull Request to create'
         type: string
-        default: 'Compressed Images Nightly'
-      branch-suffix:
-        description: 'Suffix to add to the branch name'
+        default: 'feat: Compressed Images'
+      branch-name:
+        description: 'Name of the branch to create'
         type: string
-        default: 'timestamp'
+        default: 'feat/compressed-images'
     secrets:
       github-token:
         description: 'GitHub token for authentication'
@@ -17,7 +17,7 @@ on:
 
 jobs:
   compress:
-    name: calibreapp/image-actions
+    name: compress image on ${{ github.ref_name }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -34,7 +34,8 @@ jobs:
         if: steps.calibre.outputs.markdown != ''
         uses: peter-evans/create-pull-request@v4
         with:
-          title: ${{ inputs.pr-title }}
-          branch-suffix: ${{ inputs.branch-suffix }}
-          commit-message: Compressed Images
+          title: ${{ inputs.pr-title }} on ${{ github.ref_name }}
+          branch-suffix: 'timestamp'
+          commit-message: 'feat: Compressed Images'
+          branch: ${{ inputs.branch-name }}
           body: ${{ steps.calibre.outputs.markdown }}
